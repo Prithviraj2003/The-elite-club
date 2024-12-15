@@ -51,7 +51,7 @@ export default function ProductlistPage() {
   const [price, setprice] = useState(0)
   console.log(price)
   const fetchProducts = async () => {
-    const { data } = await axios.get('/api/products/getAllProducts')
+    const { data } = await axios.get('/api/products')
     setData(data.products)
   }
 
