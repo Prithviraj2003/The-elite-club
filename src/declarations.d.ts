@@ -11,4 +11,5 @@ declare module "lucide-react" {
   export const Circle: any;
   export const ChevronUp: any;
   export const IconName: any;
+  export const DropdownMenuPrimitive :any
 }
