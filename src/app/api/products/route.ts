@@ -15,35 +15,35 @@ export async function GET() {
     );
   }
 }
-export async function POST(request: NextRequest) {
-  try {
-    const { name, description, price, quantity, imageUrl, category } =
-      await request.json();
+// export async function POST(request: NextRequest) {
+//   try {
+//     const { name, description, price, quantity, imageUrl, category } =
+//       await request.json();
 
-    if (!name || !description || !price || !quantity || !category) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
+//     if (!name || !description || !price || !quantity || !category) {
+//       return NextResponse.json(
+//         { error: "Missing required fields" },
+//         { status: 400 }
+//       );
+//     }
 
-    const newProduct = await prisma.product.create({
-      data: {
-        name,
-        description,
-        price,
-        quantity,
-        imageUrl,
-        category,
-      },
-    });
+//     const newProduct = await prisma.product.create({
+//       data: {
+//         name,
+//         description,
+//         price,
+//         quantity,
+//         imageUrl,
+//         category,
+//       },
+//     });
 
-    return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
-    console.error("Error creating product: ", error);
-    return NextResponse.json(
-      { error: "Error creating product" },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json(newProduct, { status: 201 });
+//   } catch (error) {
+//     console.error("Error creating product: ", error);
+//     return NextResponse.json(
+//       { error: "Error creating product" },
+//       { status: 500 }
+//     );
+//   }
+// }

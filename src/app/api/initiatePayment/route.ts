@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
-import { Product } from '@prisma/client'
+import {  ProductSize } from '@prisma/client'
 import prisma from "@/../prisma/prisma";
 
 interface OrderItem {
     itemId: string;
+    sizeId: string;
     quantity: number;
 }
 
@@ -12,8 +13,10 @@ interface RequestBody {
     order: OrderItem[];
 }
 
-interface Notes {
-    [key: string]: number;
+interface ProductWithSize{
+    id: string;
+    name: string;
+    sizes: ProductSize[];
 }
 
 const razorpay = new Razorpay({
@@ -21,11 +24,10 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET as string,
 });
 
-const userId =process.env.TEMP_USER_ID|| "672f83b06981c6e48f930ec7";
+const userId = process.env.TEMP_USER_ID || "672f83b06981c6e48f930ec7";
 
 export async function POST(request: NextRequest) {
     try {
-        // Parse and validate the request body
         const body = (await request.json()) as RequestBody;
         const { order } = body;
 
@@ -37,7 +39,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Invalid or missing userId" }, { status: 400 });
         }
 
-        // Fetch user
         const user = await prisma.user.findUnique({
             where: { id: userId },
         });
@@ -45,67 +46,86 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Fetch products in bulk
+        // Fetch products and their sizes
         const productIds = order.map((item) => item.itemId);
-        const products: Product[] = await prisma.product.findMany({
-            where: { id: { in: productIds } },
-        });
+        const sizeIds = order.map((item) => item.sizeId);
 
-        const productMap = new Map(products.map((product) => [product.id, product]));
+        const products:ProductWithSize[] = await prisma.product.findMany({
+            where: { id: { in: productIds } },
+            include: {
+                sizes: {
+                    where: { id: { in: sizeIds } }
+                }
+            }
+        });
+        console.log(products);
         let totalAmount = 0;
-        const notes: Notes = {};
 
         for (const item of order) {
-            const product = productMap.get(item.itemId);
-            if (product && product.quantity >= item.quantity) {
-                totalAmount += product.price * item.quantity;
-                notes[product.id] = item.quantity;
-            } else {
-                console.log(product)
+            const product = products.find(p => p.id === item.itemId);
+            const size = product?.sizes.find(s => s.id === item.sizeId);
+
+            if (!product || !size) {
                 return NextResponse.json(
-                    { error: `Product not found or insufficient quantity for : ${product?.name}` },
+                    { error: `Product or size not found for product: ${product?.name}` },
                     { status: 400 }
                 );
             }
-        }
 
-        // Create Razorpay order
+            if (size.quantity < item.quantity) {
+                return NextResponse.json(
+                    { error: `Insufficient quantity for product: ${product.name}, size: ${size.size}` },
+                    { status: 400 }
+                );
+            }
+
+            totalAmount += size.price * item.quantity;
+        }
+        console.log("before : ",totalAmount);
+        totalAmount = Math.round(totalAmount)
+        console.log("After : ",totalAmount);
         const receipt = `${user.name},${user.phoneNumber},TA:${totalAmount}`.slice(0, 40);
         const options = {
-            amount: Math.round(totalAmount * 100), // Razorpay expects amount in paise
+            amount: totalAmount * 100,
             currency: "INR",
             receipt,
-            notes,
         };
 
-        const razorpayOrder = await razorpay.orders.create(options);
-
+        const razorpayOrder:any =await razorpay.orders.create(options);
+        console.log(razorpayOrder);
         // Store temporary order data
         await prisma.tempOrders.create({
             data: {
                 orderId: razorpayOrder.id,
                 orderItems: JSON.stringify(
-                    products.map((product) => ({
-                        quantity: notes[product.id],
-                        price: product.price,
-                        productId: product.id,
-                        name: product.name,
-                    }))
+                    order.map((item) => {
+                        const product = products.find(p => p.id === item.itemId);
+                        const size = product?.sizes.find(s => s.id === item.sizeId);
+                        console.log(product,size)
+                        return {
+                            quantity: item.quantity,
+                            price: size?.price,
+                            productId: item.itemId,
+                            sizeId: item.sizeId,
+                            size:size?.size,
+                            name: product?.name,
+                        };
+                    })
                 ),
                 updateProducts: JSON.stringify(
-                    products.map((product) => ({
-                        where: { id: product.id },
+                    order.map((item) => ({
+                        where: { id: item.sizeId },
                         data: {
-                            quantity: { decrement: notes[product.id] },
+                            quantity: { decrement: item.quantity },
                         },
                     }))
                 ),
-                totalAmount,
+                user: JSON.stringify({...user, phoneNumber: user.phoneNumber.toString()}),
+                totalAmount: totalAmount,
                 createdAt: new Date(),
             },
         });
 
-        // Return Razorpay order
         return NextResponse.json(razorpayOrder);
     } catch (error) {
         console.error("Error:", error);

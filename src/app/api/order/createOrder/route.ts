@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { Product, User } from "@prisma/client";
+import {  User } from "@prisma/client";
 import { sendWhatsAppMessage } from "@/services/whatsappService";
 
 import prisma from "@/../prisma/prisma";
@@ -9,6 +9,15 @@ interface PaymentDetails {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
+}
+
+interface OrderItemWithSize {
+  name: string;
+  quantity: number;
+  price: number;
+  productId: string;
+  sizeId: string;
+  size: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -34,101 +43,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Payment verified successfully");
-
     // Store payment record in database
     const paymentData = await prisma.payment.create({
       data: { razorpay_payment_id, razorpay_order_id, razorpay_signature },
     });
 
-    let orderItems: any[];
-    let updateProducts: any[];
-    let amount: number;
 
     // Fetch temp order or order details from Razorpay
     const tempOrder = await prisma.tempOrders.findUnique({
       where: { orderId: razorpay_order_id },
     });
 
-    if (tempOrder) {
-      orderItems = JSON.parse(tempOrder.orderItems);
-      updateProducts = JSON.parse(tempOrder.updateProducts);
-      amount = tempOrder.totalAmount;
-    } else {
-      console.log("Fetching order details from Razorpay");
-      const response = await fetch(
-        `https://api.razorpay.com/v1/orders/${razorpay_order_id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Basic ${Buffer.from(
-              `${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`
-            ).toString("base64")}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch order details from Razorpay");
-      }
-
-      const data = await response.json();
-      const products = await prisma.product.findMany({
-        where: { id: { in: Object.keys(data.notes || {}) } },
-      });
-
-      orderItems = products.map((product: Product) => ({
-        quantity: data.notes[product.id],
-        price: product.price,
-        product: { connect: { id: product.id } },
-      }));
-
-      updateProducts = products.map((product: Product) => ({
-        where: { id: product.id },
-        data: {
-          quantity: { decrement: data.notes[product.id] },
-        },
-      }));
-
-      amount = data.amount;
+    if (!tempOrder) {
+      return NextResponse.json({ message: "Oder not found" }, { status: 400 });
     }
+    const orderItems:OrderItemWithSize[] = JSON.parse(tempOrder.orderItems);
+    const updateSizes:any[] = JSON.parse(tempOrder.updateProducts);
+    const amount:number = tempOrder.totalAmount;
+    let user:User = JSON.parse(tempOrder.user);
+    user.phoneNumber = BigInt(user.phoneNumber);
 
     // Create order in the database
     const order = await prisma.order.create({
       data: {
         status: "PENDING",
         totalAmount: amount,
-        userId: process.env.TEMP_USER_ID||"672f83b06981c6e48f930ec7", // Replace with the actual user ID from session/token
+        userId: user.id,
         paymentId: paymentData.id,
-        items: { create: orderItems.map(({ name, ...rest }) => rest) },
+        items: {
+          create: orderItems.map((item) => ({
+            quantity: item.quantity,
+            price: item.price,
+            productId: item.productId,
+            sizeId: item.sizeId,
+          })),
+        },
       },
     });
-    console.log("Order created:", order);
 
-    // Update product quantities and delete temp order in a transaction
+    // Update product size quantities and delete temp order in a transaction
     await prisma.$transaction(async (prisma) => {
       await Promise.all(
-        updateProducts.map((update) => prisma.product.update(update))
+        updateSizes.map((update) => prisma.productSize.update(update))
       );
 
       if (tempOrder) {
         await prisma.tempOrders.delete({ where: { id: tempOrder.id } });
       }
     });
-    const response = await prisma.user.findUnique({
-      where: { id: process.env.TEMP_USER_ID||"672f83b06981c6e48f930ec7" },
-    });
-    sendWhatsAppMessage(
-      `91${response?.phoneNumber || "9307655505"}`,
-      process.env.WHATSAPP_ADMIN_PHONE_NUMBER || "919307655505",
-      {
-        userName: response?.name || "",
-        orderId: order.id,
-        totalAmount: order.totalAmount,
-        products: orderItems,
-      }
-    );
-    console.log("Product quantities updated and temporary order deleted");
+
+    if (user) {
+      sendWhatsAppMessage(
+        `91${user.phoneNumber.toString()}`,
+        process.env.WHATSAPP_ADMIN_PHONE_NUMBER || "919307655505",
+        {
+          userName: user.name,
+          orderId: order.id,
+          totalAmount: order.totalAmount,
+          products: orderItems,
+        }
+      );
+    }
+
     return NextResponse.json(
       { message: "Payment verified and order created successfully" },
       { status: 200 }

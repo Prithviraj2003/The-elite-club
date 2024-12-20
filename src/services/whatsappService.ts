@@ -2,6 +2,7 @@ interface Product {
     name: string;
     quantity: number;
     price: number;
+    size:string;
 }
 
 export const sendWhatsAppMessage = async (
