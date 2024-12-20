@@ -144,31 +144,8 @@ export default function ProductlistPage() {
                   </div>
                   <div className="flex flex-col gap-[0.38rem] md:flex-row sm:flex-col">
                     <BrandSelectionComponent />
-                    {/* <BrandSelectionComponent /> */}
                   </div>
-                  {/* <Select name="Price Dropdown">
-                    <SelectTrigger
-                      size="md"
-                      variant="outline"
-                      shape="square"
-                      colorScheme="undefined_undefined"
-                      indicator={
-                        <Img
-                          src="img_arrowdown_blue_gray_300.svg"
-                          width={24}
-                          height={24}
-                          alt="Arrow Down"
-                          className="h-[1.50rem] w-[1.50rem]"
-                        />
-                      }
-                      className="gap-[1.00rem] !border-t font-semibold"
-                    >
-                      <SelectValue placeholder={`Price range`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItems options={dropDownOptions} />
-                    </SelectContent>
-                  </Select> */}
+
                   <div className="text-#00000 font-semibold mb-3"> Price </div>
                   <div className="text-sm text-blue_gray-900_01 font-semibold">Current Value- ₹{price} </div>
                   <input type="range" value={price} max={10000} onChange={(e) => setprice(Number(e.target.value))} />
