@@ -93,24 +93,28 @@ export default function Header({ ...props }: Props) {
             </MenubarMenu>
             <MenubarMenu>
               <MenubarTrigger>
-                <Heading
-                  size="headings"
-                  as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
-                >
-                  About Us
-                </Heading>
+                <Link href={'/about-us'}>
+                  <Heading
+                    size="headings"
+                    as="p"
+                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  >
+                    About Us
+                  </Heading>
+                </Link>
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>
               <MenubarTrigger>
-                <Heading
-                  size="headings"
-                  as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
-                >
-                  Contact Us
-                </Heading>
+                <Link href={'/contact-us'}>
+                  <Heading
+                    size="headings"
+                    as="p"
+                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  >
+                    Contact Us
+                  </Heading>
+                </Link>
               </MenubarTrigger>
             </MenubarMenu>
             <MenubarMenu>

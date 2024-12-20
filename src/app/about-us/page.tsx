@@ -3,7 +3,7 @@ import React from 'react'
 const page = () => {
     return (
         <div className='bg-[#000000] h-screen w-full text-[#ffffff] text-center flex flex-col'>
-            <div className='flex flex-col gap-4 text-center justify-center w-[60%] mx-auto border border-gray-700 border-opacity-40 p-3'>
+            <div className='flex flex-col gap-4 text-center justify-center w-[80%] md:w-[60%] max-w-[850px] mx-auto border border-gray-700 border-opacity-40 p-3'>
                 <div className='text-2xl m-8'>The What. The Why. The Who.</div>
                 <div className='text-lg m-4'>Here’s Everything. Well, Maybe Not Everything, But Some Of It. </div>
                 <div className='text-sm'>
