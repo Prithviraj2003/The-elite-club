@@ -131,6 +131,9 @@ const page = ({ params }: { params: { slug: string } }) => {
                                         <option value="" className='bg-[#000000] outline-none w-full'> {size} </option>
                                     ))}
                                 </select>
+                                <div>
+                                    <button className='bg-[#262626] text-sm px-7 py-2 rounded-xl' >Select Options</button>
+                                </div>
                             </div>
                         ))}
                     </div>
