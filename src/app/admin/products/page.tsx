@@ -58,6 +58,12 @@ interface Row {
   toggleSelected: (value: boolean) => void;
 }
 
+interface Quantity {
+  id: string,
+  size: string;
+  quantity: Number;
+}
+
 const AdminProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,22 +74,25 @@ const AdminProductsPage = () => {
     price: 0,
     quantity: "",
   });
+  const [setCurrentQuantity, setsetCurrentQuantity] = useState<number | null>(null)
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {}
   );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [Quantity, setQuantity] = useState<Quantity[]>([])
 
   const fetchProducts = async () => {
     const { data } = await axios.get("/api/products");
     setProducts(data.products);
+    const sizes = data.products.sizes
+    // setQuantity(sizes)
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
   const columns: ColumnDef<any>[] = [
     {
       id: "select",
@@ -150,6 +159,10 @@ const AdminProductsPage = () => {
     setIsModalOpen(true);
   };
 
+  const handleEditQuantity = () => {
+
+  }
+
   const handleDeleteProduct = async (productId: String) => {
     await axios.delete(`/api/products/${productId}`);
     fetchProducts();
@@ -165,6 +178,16 @@ const AdminProductsPage = () => {
     setRowSelection({});
     fetchProducts();
   };
+
+  const handleUpdateQuantity = async (id: string, size: string, quantity: number) => {
+    const { data, status } = await axios.put('/api/products', {
+      id, size, quantity
+    })
+    console.log(data)
+    if (status == 200) {
+      window.location.reload()
+    }
+  }
 
   const handleSaveProduct = async () => {
     if (isEditMode) {
@@ -196,7 +219,7 @@ const AdminProductsPage = () => {
   });
 
   return (
-    <div>
+    <div className=" bg-[#000000] w-full  ">
       {/* <div className="flex justify-between py-4">
         <Button onClick={handleAddProduct}>Add Product</Button>
         <Button
@@ -207,7 +230,7 @@ const AdminProductsPage = () => {
           Delete Selected Products
         </Button>
       </div> */}
-      <Table className="bg-[#000000] text-[#ffffff] w-full max-w-screen">
+      <Table className="bg-[#000000] text-[#ffffff] w-full max-w-7xl mx-auto">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="border-[#a3a3a3] border-opacity-40 w-full flex justify-around">
@@ -226,7 +249,7 @@ const AdminProductsPage = () => {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.map((row: Row, index) => (
-            <Accordion type="single" collapsible className="md:w-auto w-full">
+            <Accordion type="single" collapsible className="md:w-auto w-[97%] max-w-7xl mx-auto">
               <AccordionItem value={`item-${row.id}`}>
                 <AccordionTrigger className="w-full">
                   <TableRow key={row.id} className="border-[#a3a3a359] border-opacity-35 w-full flex justify-evenly items-center ">
@@ -237,7 +260,7 @@ const AdminProductsPage = () => {
                     ))}
                   </TableRow>
                 </AccordionTrigger>
-                <AccordionContent className="w-full md:px-4">
+                <AccordionContent className="w-[90%] md:px-4">
                   <div>
                     {/* @ts-ignore */}
                     {products[index].sizes?.map((sizeInfo, index) => (
@@ -257,12 +280,20 @@ const AdminProductsPage = () => {
                             <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.price.toFixed().toString()}</div>
                             <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.quantity.toString()}</div>
                             <Dialog>
-                              <DialogTrigger>
+                              <DialogTrigger onClick={() => setsetCurrentQuantity(sizeInfo.quantity)} >
                                 <div className="m-2 p-1 w-[170px] md:w-auto cursor-pointer">EDIT</div>
                               </DialogTrigger>
                               <DialogContent className="bg-[#000000]" >
-                                <div className="text-[#ffffff]  " >
-
+                                <div className="text-[#ffffff] m-5 " >
+                                  <div className="mb-3">
+                                    Update Product Quantity
+                                  </div>
+                                  <input type="number" className="border border-[#ffffff]" value={setCurrentQuantity!}
+                                    onChange={(e) => setsetCurrentQuantity(Number(e.target.value))} />
+                                  <button className="my-3 bg-[#ffffff] text-[#000000] text-sm px-4 py-2 rounded-lg"
+                                    onClick={() => handleUpdateQuantity(sizeInfo.id, sizeInfo.size, setCurrentQuantity!)}
+                                  >
+                                    Update Quantity </button>
                                 </div>
                               </DialogContent>
                             </Dialog>

@@ -19,6 +19,40 @@ export async function GET() {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json();
+  if (!body.id || !body.size || !body.quantity) {
+    return NextResponse.json(
+      {
+        error: "Details missing",
+      },
+      { status: 400 }
+    );
+  }
+  try {
+    const updateQuantity = await prisma.productSize.update({
+      where: {
+        id: body.id,
+        size: body.size,
+      },
+      data: {
+        quantity: body.quantity,
+      },
+    });
+    return NextResponse.json(
+      {
+        updateQuantity,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    return NextResponse.error();
+  }
+}
+
 // export async function POST(request: NextRequest) {
 //   try {
 //     const { name, description, price, quantity, imageUrl, category } =

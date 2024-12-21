@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/../prisma/prisma";
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params;
 
@@ -12,7 +15,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     return NextResponse.json(deletedProduct, { status: 200 });
   } catch (error) {
     console.error("Error deleting product: ", error);
-    return NextResponse.json({ error: "Error deleting product" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error deleting product" },
+      { status: 500 }
+    );
   }
 }
 
@@ -44,17 +50,23 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 //   }
 // }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }){
-    try {
-        const { id } = params;
-    
-        const product = await prisma.product.findUnique({
-        where: { id },
-        });
-    
-        return NextResponse.json(product, { status: 200 });
-    } catch (error) {
-        console.error("Error fetching product: ", error);
-        return NextResponse.json({ error: "Error fetching product" }, { status: 500 });
-    }
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    return NextResponse.json(product, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching product: ", error);
+    return NextResponse.json(
+      { error: "Error fetching product" },
+      { status: 500 }
+    );
+  }
 }
