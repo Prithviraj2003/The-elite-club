@@ -54,6 +54,14 @@ export default function ShoppingCartPage() {
     }, 0); // Initial total is 0
   }
   const totalPrice = calculateTotalPrice(cartItems);
+  // Order structure according to updated API's
+  // const order=[
+  //   {
+  //     "itemId": "67654941b66ec86eb5037ab7",
+  //     "sizeId": "67654941b66ec86eb5037ab8",
+  //     "quantity": 2
+  //   }
+  // ]
   const order = cartItems.map((item: any) => {
     return {
       itemId: item.id,

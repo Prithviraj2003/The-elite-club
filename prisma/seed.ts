@@ -9,14 +9,17 @@ const addUsers = async () => {
         {
           name: "Gautham",
           phoneNumber: 9845398233,
+          role: "USER",
         },
         {
           name: "Alice",
           phoneNumber: 9876543210,
+          role: "ADMIN",
         },
         {
           name: "Bob",
           phoneNumber: 9123456789,
+          role: "USER",
         },
       ],
     });
@@ -32,23 +35,44 @@ const fetchAndAddProducts = async () => {
     const data = await response.json();
     const products = data;
 
-    const productData = [];
     for (const product of products) {
-      productData.push({
-        name: product.title,
-        description: product.description,
-        price: product.price,
-        quantity: Math.floor(Math.random() * 100) + 1, // Random quantity between 1 and 100
-        category: "CLOTHING",
-        imageUrl: product.image,
+      // First create the main product
+      const createdProduct = await prisma.product.create({
+        data: {
+          name: product.title,
+          description: product.description,
+          price: product.price,
+          availability: true,
+          category: "CLOTHING",
+          imageUrl: product.image,
+          // Add sizes for each product
+          sizes: {
+            create: [
+              {
+                size: "S",
+                price: product.price,
+                quantity: Math.floor(Math.random() * 100) + 1,
+                imageUrl: product.image,
+              },
+              {
+                size: "M",
+                price: product.price * 1.1,
+                quantity: Math.floor(Math.random() * 100) + 1,
+                imageUrl: product.image,
+              },
+              {
+                size: "L",
+                price: product.price * 1.2,
+                quantity: Math.floor(Math.random() * 100) + 1,
+                imageUrl: product.image,
+              },
+            ],
+          },
+        },
       });
     }
 
-    const createdProducts = await prisma.product.createMany({
-      data: productData,
-    });
-
-    console.log("Products created: ", createdProducts);
+    console.log("Products and sizes created");
   } catch (error) {
     console.error("Error fetching/adding products: ", error);
   }
@@ -57,53 +81,54 @@ const fetchAndAddProducts = async () => {
 const addOrdersAndPayments = async () => {
   try {
     const users = await prisma.user.findMany();
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: { sizes: true },
+    });
 
-    const orders = [
-      {
-        totalAmount: 150.0,
-        status: "PENDING",
-        userId: users[0].id,
+    // Create payment first
+    const payment = await prisma.payment.create({
+      data: {
+        razorpay_payment_id: "pay_29QQoUBi66xm2f",
+        razorpay_order_id: "order_DBJOWzybf0sJbb",
+        razorpay_signature: "e7ecf544e1e4b17c",
       },
-      {
-        totalAmount: 300.0,
-        status: "SHIPPED",
-        userId: users[1].id,
-      },
-    ];
+    });
 
-    const createdOrders = [];
-    for (const orderData of orders) {
-      const order = await prisma.order.create({
-        data: orderData,
-      });
-      createdOrders.push(order);
-    }
+    // Create orders with payment connection
+    const orders = await Promise.all([
+      prisma.order.create({
+        data: {
+          totalAmount: 150.0,
+          status: "PENDING",
+          userId: users[0].id,
+          paymentId: payment.id,
+        },
+      }),
+      prisma.order.create({
+        data: {
+          totalAmount: 300.0,
+          status: "SHIPPED",
+          userId: users[1].id,
+          paymentId: payment.id,
+        },
+      }),
+    ]);
 
+    // Create order items with size references
     const orderItems = [
       {
         quantity: 2,
         price: products[0].price,
         productId: products[0].id,
-        orderId: createdOrders[0].id,
+        orderId: orders[0].id,
+        sizeId: products[0].sizes[0].id, // Using first size
       },
       {
         quantity: 1,
         price: products[1].price,
         productId: products[1].id,
-        orderId: createdOrders[0].id,
-      },
-      {
-        quantity: 3,
-        price: products[2].price,
-        productId: products[2].id,
-        orderId: createdOrders[1].id,
-      },
-      {
-        quantity: 1,
-        price: products[3].price,
-        productId: products[3].id,
-        orderId: createdOrders[1].id,
+        orderId: orders[0].id,
+        sizeId: products[1].sizes[0].id,
       },
     ];
 
@@ -113,27 +138,7 @@ const addOrdersAndPayments = async () => {
       });
     }
 
-    console.log("Order items created.");
-
-    // Add payments for orders
-    const payments = [
-      {
-        razorpay_payment_id: "pay_29QQoUBi66xm2f",
-        razorpay_order_id: "order_DBJOWzybf0sJbb",
-        razorpay_signature: "e7ecf544e1e4b17c",
-        Order: {
-          connect: [{ id: createdOrders[0].id }, { id: createdOrders[1].id }],
-        },
-      },
-    ];
-
-    for (const paymentData of payments) {
-      await prisma.payment.create({
-        data: paymentData,
-      });
-    }
-
-    console.log("Payments created.");
+    console.log("Orders, payments, and items created");
   } catch (error) {
     console.error("Error creating orders and payments: ", error);
   }
