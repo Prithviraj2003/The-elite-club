@@ -4,7 +4,11 @@ import { Product } from "@prisma/client";
 
 export async function GET() {
   try {
-    const products: Product[] = await prisma.product.findMany();
+    const products: Product[] = await prisma.product.findMany({
+      include: {
+        sizes: true,
+      },
+    });
 
     return NextResponse.json({ products }, { status: 200 });
   } catch (error) {

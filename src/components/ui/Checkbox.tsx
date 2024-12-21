@@ -26,11 +26,11 @@ interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof Root>, Var
 const Checkbox = React.forwardRef<React.ElementRef<typeof Root>, CheckboxProps>(
   ({ className, label, variant = "primary", size, id, ...props }, ref) => {
     return (
-      <div className={cn("flex items-center gap-[0.31rem] cursor-pointer", className)}>
+      <div className={cn("flex items-center gap-[0.31rem] cursor-pointer   ", className)}>
         <Root
           ref={ref}
           className={cn(
-            "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#0275FF] data-[state=checked]:text-primary-foreground flex justify-center items-center",
+            "peer h-4 w-4 border  shrink-0 rounded-sm  ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#0275FF] data-[state=checked]:text-primary-foreground flex justify-center items-center",
             checkboxVariants({ [variant]: "unselected", size }),
           )}
           {...props}

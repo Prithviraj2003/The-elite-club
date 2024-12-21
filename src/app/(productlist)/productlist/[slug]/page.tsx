@@ -27,7 +27,7 @@ const page = ({ params }: { params: { slug: string } }) => {
         const { data } = await axios.get(`https://fakestoreapi.com/products/${id}`)
         setData(data)
     }
-
+    console.log(Data)
     useEffect(() => {
         fetchProducts()
     }, [])

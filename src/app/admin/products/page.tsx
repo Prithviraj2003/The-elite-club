@@ -34,6 +34,16 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+// @ts-ignore
+import { Edit, Delete } from "lucide-react";
+
 interface Product {
   id: string;
   name: string;
@@ -78,7 +88,7 @@ const AdminProductsPage = () => {
     {
       id: "select",
       header: ({ table }) => (
-        <Checkbox
+        <Checkbox className="  "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -87,9 +97,9 @@ const AdminProductsPage = () => {
         />
       ),
       cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+        <Checkbox className=""
+        // checked={row.getIsSelected()}
+        // onCheckedChange={(value) => row.toggleSelected(!!value)}
         />
       ),
     },
@@ -128,7 +138,6 @@ const AdminProductsPage = () => {
       ),
     },
   ];
-
   const handleAddProduct = () => {
     setIsEditMode(false);
     setCurrentProduct({ id: "", name: "", price: 0, quantity: "" });
@@ -188,7 +197,7 @@ const AdminProductsPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between py-4">
+      {/* <div className="flex justify-between py-4">
         <Button onClick={handleAddProduct}>Add Product</Button>
         <Button
           variant="destructive"
@@ -197,38 +206,80 @@ const AdminProductsPage = () => {
         >
           Delete Selected Products
         </Button>
-      </div>
-      <Table>
+      </div> */}
+      <Table className="bg-[#000000] text-[#ffffff] w-full max-w-screen">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="border-[#a3a3a3] border-opacity-40 w-full flex justify-around">
               {headerGroup.headers.map((header) => (
                 <TableCell key={header.id}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                 </TableCell>
               ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map((row: Row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
+          {table.getRowModel().rows.map((row: Row, index) => (
+            <Accordion type="single" collapsible className="md:w-auto w-full">
+              <AccordionItem value={`item-${row.id}`}>
+                <AccordionTrigger className="w-full">
+                  <TableRow key={row.id} className="border-[#a3a3a359] border-opacity-35 w-full flex justify-evenly items-center ">
+                    {row.getVisibleCells().map((cell, index) => (
+                      <TableCell key={cell.id} className={` ${index == 0 ? "40px" : "w-[170px]"} `}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </AccordionTrigger>
+                <AccordionContent className="w-full md:px-4">
+                  <div>
+                    {/* @ts-ignore */}
+                    {products[index].sizes?.map((sizeInfo, index) => (
+                      <div className="flex flex-col" key={index}>
+                        {index == 0 &&
+                          <div className="flex gap-4 md:m-auto ml-8 w-full justify-evenly">
+                            <div className="m-2 p-1 w-[150px] md:w-auto"> SIZES </div>
+                            <div className="m-2 p-1 w-[150px] md:w-auto"> PRICE </div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto"> QUANTITY </div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto"> <Edit size={18} /> </div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto"> <Delete size={18} /> </div>
+                          </div>
+                        }
+                        <div className="flex">
+                          <div className="flex gap-4 md:m-auto ml-10 w-full justify-evenly text-[#ffffff] ">
+                            <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.size}</div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.price.toFixed().toString()}</div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.quantity.toString()}</div>
+                            <Dialog>
+                              <DialogTrigger>
+                                <div className="m-2 p-1 w-[170px] md:w-auto cursor-pointer">EDIT</div>
+                              </DialogTrigger>
+                              <DialogContent className="bg-[#000000]" >
+                                <div className="text-[#ffffff]  " >
+
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                            <div className="m-2 p-1 w-[170px] md:w-auto">DELETE</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           ))}
         </TableBody>
       </Table>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[#000000]">
           <DialogHeader>
             <DialogTitle>
               {isEditMode ? "Edit Product" : "Add Product"}
@@ -265,7 +316,7 @@ const AdminProductsPage = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={handleSaveProduct}>
+            <Button onClick={handleSaveProduct} className="bg-[#ffffff] rounded-lg">
               {isEditMode ? "Save Changes" : "Add Product"}
             </Button>
           </DialogFooter>
