@@ -21,6 +21,8 @@ import { Square } from "lucide-react";
 import ProductDetails1 from "@/components/page";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+// @ts-ignore
+import { ShoppingCart } from "lucide-react";
 
 export default function ShoppingCartPage() {
   const { cartItems, incrementItem, decrementItem } = useCart();
@@ -142,9 +144,9 @@ export default function ShoppingCartPage() {
   return (
     <div className="flex w-full flex-col gap-[5.50rem] bg-white-a700 md:gap-[4.13rem] sm:gap-[2.75rem]">
       <div className="flex flex-col gap-[1.50rem]">
-        <Header />
+        {/* <Header /> */}
         <div className="flex flex-col items-center">
-          <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[2.88rem] md:px-[1.25rem]">
+          {/* <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[2.88rem] md:px-[1.25rem]">
             <Breadcrumb>
               <BreadcrumbList className="flex flex-wrap items-center gap-[0.38rem]">
                 <BreadcrumbItem>
@@ -367,10 +369,35 @@ export default function ShoppingCartPage() {
                 </div>
               </div>
             </div>
+          </div> */}
+          <div className="h-screen w-full bg-[#000000]">
+            <div className="flex justify-center text-[#ffffff] flex-wrap max-w-[800px] mx-auto gap-16 m-10">
+              <div className="flex items-center justify-center">
+                <div className="bg-[#ffffff] text-[#000000] p-1 px-3 mx-2 rounded-full " >1</div>
+                <div>SHOPPING CART</div>
+              </div>
+              <div className="flex items-center justify-center text-[#a3a3a3]  ">
+                <div className="bg-[#1f1f1f] text-[#ffffff] p-1 px-3 mx-2 rounded-full " >2</div>
+                <div> CHECKOUT</div>
+              </div>
+              <div className="flex items-center justify-center text-[#a3a3a3] ">
+                <div className="bg-[#1a1a1a] text-[#ffffff] p-1 px-3 mx-2 rounded-full " > 3</div>
+                <div> ORDER STATUS</div>
+              </div>
+            </div>
+            <div className="flex flex-col mt-16 text-[#ffffff] max-w-[600px] mx-auto flex-wrap justify-center text-center items-center h-[50vh] gap-3" >
+              <div> <ShoppingCart size={40} /> </div>
+              <div className="text-xl"> YOUR SHOPPING CART IS EMPTY </div>
+              <div className="text-sm text-[#979797]"> We invite you to get acquainted with an assortment of our shop. Surely you can find something for yourself!</div>
+              <div>
+                <Link href={'/productlist'}>  <button className="bg-[#5FFD00] text-[#000000] px-4 py-2 rounded-lg font-semibold text-sm" > Return To Shop</button></Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <RelatedProductsSection />
+      {/* FOOTER */}
       <div className="flex">
         <div className="flex w-full justify-center bg-blue_gray-900_01 py-[2.50rem] sm:py-[1.25rem]">
           <div className="mx-auto flex w-full max-w-[75.25rem] justify-center md:px-[1.25rem]">
