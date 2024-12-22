@@ -1,10 +1,18 @@
-"use client";
-
 import { Img, Text, Separator, Heading, Button, Input } from "@/components/ui";
 import Link from "next/link";
 import React from "react";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
-export default function SIGNINPage() {
+export default async function SIGNINPage() {
+  const { userId } = await auth();
+
+  if (userId) {
+    // Query DB for user specific information or display assets only to signed in users
+  }
+
+  // Get the Backend API User object when you need access to the user's information
+  const user = await currentUser();
+  console.log("user from Clerk", user);
   return (
     <div className="w-full bg-gray-200">
       <div className="flex md:flex-col">
@@ -30,7 +38,11 @@ export default function SIGNINPage() {
                     </Heading>
                     <div className="flex flex-col gap-[2.00rem] self-stretch">
                       <div className="flex flex-col items-start justify-center gap-[0.38rem]">
-                        <Text size="textlg" as="p" className="text-[1.13rem] font-medium text-blue_gray-900_01">
+                        <Text
+                          size="textlg"
+                          as="p"
+                          className="text-[1.13rem] font-medium text-blue_gray-900_01"
+                        >
                           Email Address
                         </Text>
                         <Input
@@ -42,7 +54,11 @@ export default function SIGNINPage() {
                       </div>
                       <div className="flex flex-col items-end gap-[1.25rem]">
                         <div className="flex flex-col items-start justify-center gap-[0.38rem] self-stretch">
-                          <Text size="textlg" as="p" className="text-[1.13rem] font-medium text-blue_gray-900_01">
+                          <Text
+                            size="textlg"
+                            as="p"
+                            className="text-[1.13rem] font-medium text-blue_gray-900_01"
+                          >
                             Password
                           </Text>
                           <Input
@@ -66,28 +82,44 @@ export default function SIGNINPage() {
                   </div>
                   <div className="flex flex-wrap gap-[0.25rem]">
                     <Link href="#">
-                      <Text as="p" className="text-[1.00rem] font-normal text-gray-950">
+                      <Text
+                        as="p"
+                        className="text-[1.00rem] font-normal text-gray-950"
+                      >
                         Don’t have an account?
                       </Text>
                     </Link>
                     <div className="flex justify-center mx-auto ">
-                      <a href="/productlist" >
-                        <Heading size="headingmd" as="h3" className="text-[1.00rem] font-bold text-blue_gray-900_01">
+                      <a href="/productlist">
+                        <Heading
+                          size="headingmd"
+                          as="h3"
+                          className="text-[1.00rem] font-bold text-blue_gray-900_01"
+                        >
                           Sign Up
                         </Heading>
                       </a>
                     </div>
                   </div>
                 </div>
-                <Separator orientation="horizontal" className="h-[0.06rem] w-full self-stretch bg-gray-200" />
+                <Separator
+                  orientation="horizontal"
+                  className="h-[0.06rem] w-full self-stretch bg-gray-200"
+                />
                 <div className="flex flex-wrap gap-[1.38rem]">
                   <Link href="#">
-                    <Text as="p" className="text-[1.00rem] font-normal text-blue_gray-200">
+                    <Text
+                      as="p"
+                      className="text-[1.00rem] font-normal text-blue_gray-200"
+                    >
                       Terms & Conditions
                     </Text>
                   </Link>
                   <Link href="#" className="self-end">
-                    <Text as="p" className="text-[1.00rem] font-normal text-blue_gray-200">
+                    <Text
+                      as="p"
+                      className="text-[1.00rem] font-normal text-blue_gray-200"
+                    >
                       Privacy Policy
                     </Text>
                   </Link>
