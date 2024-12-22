@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/../prisma/prisma";
-import { Product } from "@prisma/client";
+import { Product, Sizes } from "@prisma/client";
 
 export async function GET() {
   try {
@@ -19,46 +19,18 @@ export async function GET() {
     );
   }
 }
-
-export async function PUT(request: NextRequest) {
-  const body = await request.json();
-  if (!body.id || !body.size || !body.quantity) {
-    return NextResponse.json(
-      {
-        error: "Details missing",
-      },
-      { status: 400 }
-    );
-  }
-  try {
-    const updateQuantity = await prisma.productSize.update({
-      where: {
-        id: body.id,
-        size: body.size,
-      },
-      data: {
-        quantity: body.quantity,
-      },
-    });
-    return NextResponse.json(
-      {
-        updateQuantity,
-      },
-      {
-        status: 200,
-      }
-    );
-  } catch (error) {
-    return NextResponse.error();
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const { name, description, price, quantity, imageUrl, category } =
-      await request.json();
+    const { name, description, price, category, sizes } = await request.json();
 
-    if (!name || !description || !price || !quantity || !category) {
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !category ||
+      !sizes ||
+      !Array.isArray(sizes)
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -70,9 +42,26 @@ export async function POST(request: NextRequest) {
         name,
         description,
         price,
-        imageUrl,
         category,
         availability: true,
+        sizes: {
+          create: sizes.map(
+            (size: {
+              size: Sizes;
+              price: number;
+              quantity: number;
+              imageUrl?: string;
+            }) => ({
+              size: size.size,
+              price: size.price,
+              quantity: size.quantity,
+              imageUrl: size.imageUrl,
+            })
+          ),
+        },
+      },
+      include: {
+        sizes: true,
       },
     });
 
@@ -85,3 +74,31 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+//Example payload for POST api :
+//{
+//   "name": "Classic T-Shirt",
+//   "description": "A comfortable cotton t-shirt for everyday wear",
+//   "price": 29.99,
+//   "category": "CLOTHING",
+//   "sizes": [
+//     {
+//       "size": "S",
+//       "price": 29.99,
+//       "quantity": 50,
+//       "imageUrl": "https://example.com/tshirt-small.jpg"
+//     },
+//     {
+//       "size": "M",
+//       "price": 29.99,
+//       "quantity": 75,
+//       "imageUrl": "https://example.com/tshirt-medium.jpg"
+//     },
+//     {
+//       "size": "L",
+//       "price": 29.99,
+//       "quantity": 60,
+//       "imageUrl": "https://example.com/tshirt-large.jpg"
+//     }
+//   ]
+// }

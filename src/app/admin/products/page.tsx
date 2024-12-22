@@ -78,7 +78,40 @@ const AdminProductsPage = () => {
     category: "",    //enum,
     availability: true
   });
+  const [AddProduct, setAddCurrentProduct] = useState({
+    id: "",
+    name: "",
+    price: null,
+    description: "",
+    imageUrl: "",    //enum
+    category: "",    //enum,
+    availability: true,
+    sizes: [
+      {
+        size: "S",
+        price: 0,
+        quantity: 0,
+        imageUrl: ""
+      }, {
+        size: "M",
+        price: 0,
+        quantity: 0,
+        imageUrl: ""
+      }, {
+        size: "L",
+        price: 0,
+        quantity: 0,
+        imageUrl: ""
+      }, {
+        size: "XL",
+        price: 0,
+        quantity: 0,
+        imageUrl: ""
+      },
+    ]
+  });
   const [setCurrentQuantity, setsetCurrentQuantity] = useState<number | null>(null)
+  const [CurrentPrice2, setCurrentPrice2] = useState<number | null>(null)
   const [productAvailability, setproductAvailability] = useState<any>(null)
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {}
@@ -155,13 +188,14 @@ const AdminProductsPage = () => {
 
   const handleEditProduct = (product: Product) => {
     setIsEditMode(true);
+    // @ts-ignore
     setCurrentProduct(product);
     setIsModalOpen(true);
   };
 
-  const handleUpdateAvailability = async (id: string, availability: boolean) => {
+  const handleUpdateAvailability = async (id: string, availability: boolean, price: number) => {
     try {
-      const { data, status } = await axios.put('/api/changeAvailability', { id, availability })
+      const { data, status } = await axios.put(`/api/changeAvailability`, { id, availability, price })
       if (status) {
         window.location.reload()
       }
@@ -173,7 +207,7 @@ const AdminProductsPage = () => {
     setisDeleteMode(true)
     setproductAvailability({ id: productId.id, availability: productId.availability! })
     // await axios.delete(`/api/products/${productId}`);
-    // fetchProducts();
+    fetchProducts();
   };
 
   const handleDeleteSelectedProducts = async () => {
@@ -187,9 +221,9 @@ const AdminProductsPage = () => {
     fetchProducts();
   };
 
-  const handleUpdateQuantity = async (id: string, size: string, quantity: number) => {
-    const { data, status } = await axios.put('/api/products', {
-      id, size, quantity
+  const handleUpdateQuantity = async (id: string, size: string, quantity: number, price: number) => {
+    const { data, status } = await axios.put(`/api/products/size/${id}`, {
+      size, quantity, price
     })
     console.log(data)
     if (status == 200) {
@@ -201,7 +235,7 @@ const AdminProductsPage = () => {
     if (isEditMode) {
       await axios.put(`/api/products/${currentProduct.id}`, currentProduct);
     } else {
-      await axios.post("/api/products", currentProduct);
+      await axios.post("/api/products", AddProduct);
     }
     setIsModalOpen(false);
     fetchProducts();
@@ -226,6 +260,25 @@ const AdminProductsPage = () => {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const handleSizeChange = (index: any, field: any, value: any) => {
+    setAddCurrentProduct((prevProduct) => {
+      const updatedSizes = prevProduct.sizes.map((item, idx) => {
+        if (idx === index) {
+          // Update the specific field of the current size
+          return {
+            ...item,
+            [field]: value,
+          };
+        }
+        return item;
+      });
+      return {
+        ...prevProduct,
+        size: updatedSizes,
+      };
+    });
+  };
+  console.log(AddProduct)
   return (
     <div className=" bg-[#000000] w-full  ">
       <div className="flex items-center justify-between mx-5">
@@ -282,10 +335,10 @@ const AdminProductsPage = () => {
                         <div className="flex">
                           <div className="flex gap-4 md:m-auto ml-10 w-full justify-evenly text-[#ffffff] ">
                             <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.size}</div>
-                            <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.price.toFixed().toString()}</div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto text-[#ffffff]">₹{sizeInfo.price.toFixed().toString()}</div>
                             <div className="m-2 p-1 w-[170px] md:w-auto">{sizeInfo.quantity.toString()}</div>
                             <Dialog>
-                              <DialogTrigger onClick={() => setsetCurrentQuantity(sizeInfo.quantity)} >
+                              <DialogTrigger onClick={() => { setsetCurrentQuantity(sizeInfo.quantity), setCurrentPrice2(sizeInfo.price) }} >
                                 <div className="m-2 p-1 w-[170px] md:w-auto cursor-pointer">EDIT</div>
                               </DialogTrigger>
                               <DialogContent className="bg-[#000000]" >
@@ -295,8 +348,10 @@ const AdminProductsPage = () => {
                                   </div>
                                   <input type="number" className="border border-[#ffffff]" value={setCurrentQuantity!}
                                     onChange={(e) => setsetCurrentQuantity(Number(e.target.value))} />
+                                  <input type="number" className="border border-[#ffffff]" value={CurrentPrice2!}
+                                    onChange={(e) => setCurrentPrice2(Number(e.target.value))} />
                                   <button className="my-3 bg-[#ffffff] text-[#000000] text-sm px-4 py-2 rounded-lg"
-                                    onClick={() => handleUpdateQuantity(sizeInfo.id, sizeInfo.size, setCurrentQuantity!)}
+                                    onClick={() => handleUpdateQuantity(sizeInfo.id, sizeInfo.size, setCurrentQuantity!, CurrentPrice2!)}
                                   >
                                     Update Quantity </button>
                                 </div>
@@ -316,56 +371,102 @@ const AdminProductsPage = () => {
         </TableBody>
       </Table>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-[#000000]">
-          <DialogHeader>
-            <DialogTitle>
-              {isEditMode ? "Edit Product" : "Add Product"}
-            </DialogTitle>
-            <DialogDescription>
-              <Input
-                value={currentProduct.name}
-                onChange={(e) =>
-                  setCurrentProduct({ ...currentProduct, name: e.target.value })
-                }
-                placeholder="Name"
-              />
-              <Input
-                value={currentProduct.description}
-                onChange={(e) =>
-                  setCurrentProduct({ ...currentProduct, name: e.target.value })
-                }
-                placeholder="Description"
-              />
-              <Input
-                value={currentProduct.price}
-                onChange={(e) =>
-                  setCurrentProduct({
-                    ...currentProduct,
-                    price: parseFloat(e.target.value),
-                  })
-                }
-                placeholder="Price"
-              />
-              <Input
-                placeholder="Image URL"
-                value={currentProduct.imageUrl}
-                onChange={(e) => (
-                  {
-                    ...currentProduct,
-                    imageUrl: e.target.value
+        <DialogContent className="bg-[#000000] w-[500px] text-[#ffffff] h-[87vh] overflow-y-scroll">
+          <div className="">
+            <Input
+              value={AddProduct.name}
+              onChange={(e) =>
+                setAddCurrentProduct((v) => ({ ...v, name: e.target.value }))
+              }
+              placeholder="Name"
+            />
+            <Input
+              value={AddProduct.description}
+              onChange={(e) =>
+                setAddCurrentProduct((v) => ({ ...v, description: e.target.value }))
+              }
+              placeholder="Description"
+            />
+            <Input
+              value={AddProduct.price ?? 0}
+              onChange={(e) =>
+                setAddCurrentProduct({
+                  ...AddProduct,
+                  // @ts-ignore
+                  price: parseFloat(e.target.value),
+                })
+              }
+              placeholder="Price"
+            />
+            <Input
+              placeholder="Image URL"
+              value={AddProduct.imageUrl}
+              onChange={(e) => setAddCurrentProduct((v) => ({
+                ...v,
+                imageUrl: e.target.value
+              }))}
+            />
+            <div className="flex gap-3 flex-col justify-between">
+              <div className="flex items-center justify-evenly ">
+                <div>S</div>
+                <div> <Input
+                  placeholder="Quantity"
+                  type="number"
+                  onChange={(e) =>
+                    handleSizeChange(0, "quantity", e.target.value)
                   }
-                )}
-              />
-              <div>
-                <select name="Category" id="" className="w-full m-2">
-                  <option className="bg-[#000000] text-[#fffffff]" value="ELECTRONICS">ELECTRONICS</option>
-                  <option className="bg-[#000000] text-[#fffffff]" value="CLOTHING">CLOTHING</option>
-                  <option className="bg-[#000000] text-[#fffffff]" value="BOOKS">BOOKS</option>
-                  <option className="bg-[#000000] text-[#fffffff]" value="FURNITURE">FURNITURE</option>
-                </select>
+                /></div>
+                <div> <Input
+                  placeholder="Price"
+                  type="number"
+                  onChange={(e) =>
+                    handleSizeChange(0, "price", parseFloat(e.target.value))
+                  }
+                /> </div>
               </div>
-            </DialogDescription>
-          </DialogHeader>
+              <div> <Input placeholder="Image Url"
+                onChange={(e) =>
+                  handleSizeChange(0, "imageUrl", e.target.value)
+                }
+              /> </div>
+            </div>
+            <div className="flex gap-3 flex-col justify-between">
+              <div className="flex items-center justify-evenly ">
+                <div>M</div>
+                <div> <Input placeholder="Quantity" /> </div>
+                <div> <Input placeholder="price" type="number" /> </div>
+              </div>
+              <div> <Input placeholder="Image Url" /> </div>
+            </div>
+            <div className="flex gap-3 flex-col justify-between">
+              <div className="flex items-center justify-evenly ">
+                <div>L</div>
+                <div> <Input placeholder="Quantity" /> </div>
+                <div> <Input placeholder="price" type="number" /> </div>
+              </div>
+              <div> <Input placeholder="Image Url" /> </div>
+            </div>
+            <div className="flex gap-3 flex-col justify-between ">
+              <div className="flex items-center justify-evenly ">
+                <div>XL</div>
+                <div> <Input placeholder="Quantity" /> </div>
+                <div> <Input placeholder="price" type="number" /> </div>
+              </div>
+              <div> <Input placeholder="Image Url" /> </div>
+            </div>
+            <div>
+              <select name="Category" id="" className="w-full m-2" onChange={(e) => setAddCurrentProduct((val) => ({
+                ...AddProduct,
+                category: e.target.value
+              })
+              )}>
+                <option className="bg-[#000000] text-[#fffffff]" value="ELECTRONICS">ELECTRONICS</option>
+                <option className="bg-[#000000] text-[#fffffff]" value="CLOTHING">CLOTHING</option>
+                <option className="bg-[#000000] text-[#fffffff]" value="BOOKS">BOOKS</option>
+                <option className="bg-[#000000] text-[#fffffff]" value="FURNITURE">FURNITURE</option>
+              </select>
+            </div>
+          </div>
           <DialogFooter>
             <Button onClick={handleSaveProduct} className="bg-[#5EFD00] rounded-lg font-semibold">
               {isEditMode ? "Save Changes" : "Add Product"}
@@ -385,7 +486,7 @@ const AdminProductsPage = () => {
             {productAvailability && productAvailability?.availability == true && <div className="text-[#2bff36]"> Product availability: Public </div>}
             {productAvailability && productAvailability?.availability == false && <div className="text-[#ff2c2c]"> Product availability: Private  </div>}
             <button className="my-3 bg-[#ffffff] text-[#000000] text-sm px-4 py-2 rounded-lg"
-              onClick={() => handleUpdateAvailability(productAvailability.id, !productAvailability.availability)}
+              onClick={() => handleUpdateAvailability(productAvailability.id, !productAvailability.availability, productAvailability.price)}
             >
               Change Availability </button>
           </div>

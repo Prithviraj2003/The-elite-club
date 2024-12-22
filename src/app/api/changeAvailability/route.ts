@@ -7,7 +7,7 @@ export async function PUT(req: Request) {
   try {
     const changeAvailability = await prisma.product.update({
       where: { id: body.id },
-      data: { availability: body.availability },
+      data: { availability: body.availability, price: body.price },
     });
     return NextResponse.json({ changeAvailability }, { status: 200 });
   } catch (error) {
