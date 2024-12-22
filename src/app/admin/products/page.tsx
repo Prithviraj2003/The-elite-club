@@ -389,6 +389,7 @@ const AdminProductsPage = () => {
             />
             <Input
               value={AddProduct.price ?? 0}
+              type="number"
               onChange={(e) =>
                 setAddCurrentProduct({
                   ...AddProduct,

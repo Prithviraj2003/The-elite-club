@@ -10,7 +10,7 @@ interface Product {
   id: number,
   imageUrl: string,
   price: number,
-  rating:number,
+  rating: number,
   title: string
 }
 interface Props {
@@ -37,7 +37,7 @@ export default function ProductListProductcard({ data, cartItem }: { data: Produ
           width={272}
           height={340}
           alt="Urban Vibe Image"
-          className="mx-auto h-[21.25rem] w-full flex-1 object-cover border border-blue-500"
+          className="mx-auto h-[21.25rem] w-full flex-1 object-cover"
         />
         <Button
           size="sm"
