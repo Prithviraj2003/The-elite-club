@@ -68,13 +68,18 @@ const AdminProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteMode, setisDeleteMode] = useState(false)
   const [currentProduct, setCurrentProduct] = useState({
     id: "",
     name: "",
     price: 0,
-    quantity: "",
+    description: "",
+    imageUrl: "",    //enum
+    category: "",    //enum,
+    availability: true
   });
   const [setCurrentQuantity, setsetCurrentQuantity] = useState<number | null>(null)
+  const [productAvailability, setproductAvailability] = useState<any>(null)
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -107,8 +112,8 @@ const AdminProductsPage = () => {
       ),
       cell: ({ row }) => (
         <Checkbox className=""
-        // checked={row.getIsSelected()}
-        // onCheckedChange={(value) => row.toggleSelected(!!value)}
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
         />
       ),
     },
@@ -118,14 +123,9 @@ const AdminProductsPage = () => {
       cell: ({ row }) => <span>{row.original.name}</span>,
     },
     {
-      accessorKey: "price",
-      header: "Price",
-      cell: ({ row }) => `$${row.original.price}`,
-    },
-    {
-      accessorKey: "quantity",
-      header: "Quantity",
-      cell: ({ row }) => row.original.quantity,
+      accessorKey: "description",
+      header: "Availability",
+      cell: ({ row }) => `${row.original.availability}`,
     },
     {
       id: "edit",
@@ -140,7 +140,7 @@ const AdminProductsPage = () => {
       cell: ({ row }) => (
         <Button
           variant="destructive"
-          onClick={() => handleDeleteProduct(row.original.id)}
+          onClick={() => handleDeleteProduct(row.original)}
         >
           Delete
         </Button>
@@ -149,7 +149,7 @@ const AdminProductsPage = () => {
   ];
   const handleAddProduct = () => {
     setIsEditMode(false);
-    setCurrentProduct({ id: "", name: "", price: 0, quantity: "" });
+    // setCurrentProduct({ id: "", name: "", price: 0, quantity: "" });
     setIsModalOpen(true);
   };
 
@@ -159,13 +159,21 @@ const AdminProductsPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleEditQuantity = () => {
-
+  const handleUpdateAvailability = async (id: string, availability: boolean) => {
+    try {
+      const { data, status } = await axios.put('/api/changeAvailability', { id, availability })
+      if (status) {
+        window.location.reload()
+      }
+    } catch (error) {
+    }
   }
 
-  const handleDeleteProduct = async (productId: String) => {
-    await axios.delete(`/api/products/${productId}`);
-    fetchProducts();
+  const handleDeleteProduct = async (productId: any) => {
+    setisDeleteMode(true)
+    setproductAvailability({ id: productId.id, availability: productId.availability! })
+    // await axios.delete(`/api/products/${productId}`);
+    // fetchProducts();
   };
 
   const handleDeleteSelectedProducts = async () => {
@@ -220,16 +228,14 @@ const AdminProductsPage = () => {
 
   return (
     <div className=" bg-[#000000] w-full  ">
-      {/* <div className="flex justify-between py-4">
-        <Button onClick={handleAddProduct}>Add Product</Button>
-        <Button
-          variant="destructive"
-          onClick={handleDeleteSelectedProducts}
-          disabled={Object.keys(rowSelection).length === 0}
-        >
-          Delete Selected Products
-        </Button>
-      </div> */}
+      <div className="flex items-center justify-between mx-5">
+        <div className="flex justify-between py-4 max-w-[150px] ml-9 ">
+          <Button onClick={handleAddProduct}
+            className="bg-[#5EFD00] rounded-lg font-semibold"
+          >Add Product</Button>
+        </div>
+        <div className="text-[#ffffff] ml-6 p-3"> Total Products ({products.length}) </div>
+      </div>
       <Table className="bg-[#000000] text-[#ffffff] w-full max-w-7xl mx-auto">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -267,11 +273,10 @@ const AdminProductsPage = () => {
                       <div className="flex flex-col" key={index}>
                         {index == 0 &&
                           <div className="flex gap-4 md:m-auto ml-8 w-full justify-evenly">
-                            <div className="m-2 p-1 w-[150px] md:w-auto"> SIZES </div>
+                            <div className="m-2 p-1 w-[150px] md:w-auto px-2"> SIZES </div>
                             <div className="m-2 p-1 w-[150px] md:w-auto"> PRICE </div>
                             <div className="m-2 p-1 w-[170px] md:w-auto"> QUANTITY </div>
-                            <div className="m-2 p-1 w-[170px] md:w-auto"> <Edit size={18} /> </div>
-                            <div className="m-2 p-1 w-[170px] md:w-auto"> <Delete size={18} /> </div>
+                            <div className="m-2 p-1 w-[170px] md:w-auto pl-16"> <Edit size={18} /> </div>
                           </div>
                         }
                         <div className="flex">
@@ -297,7 +302,8 @@ const AdminProductsPage = () => {
                                 </div>
                               </DialogContent>
                             </Dialog>
-                            <div className="m-2 p-1 w-[170px] md:w-auto">DELETE</div>
+
+
                           </div>
                         </div>
                       </div>
@@ -324,8 +330,14 @@ const AdminProductsPage = () => {
                 placeholder="Name"
               />
               <Input
+                value={currentProduct.description}
+                onChange={(e) =>
+                  setCurrentProduct({ ...currentProduct, name: e.target.value })
+                }
+                placeholder="Description"
+              />
+              <Input
                 value={currentProduct.price}
-                type="number"
                 onChange={(e) =>
                   setCurrentProduct({
                     ...currentProduct,
@@ -335,22 +347,48 @@ const AdminProductsPage = () => {
                 placeholder="Price"
               />
               <Input
-                value={currentProduct.quantity}
-                onChange={(e) =>
-                  setCurrentProduct({
+                placeholder="Image URL"
+                value={currentProduct.imageUrl}
+                onChange={(e) => (
+                  {
                     ...currentProduct,
-                    quantity: e.target.value,
-                  })
-                }
-                placeholder="Quantity"
+                    imageUrl: e.target.value
+                  }
+                )}
               />
+              <div>
+                <select name="Category" id="" className="w-full m-2">
+                  <option className="bg-[#000000] text-[#fffffff]" value="ELECTRONICS">ELECTRONICS</option>
+                  <option className="bg-[#000000] text-[#fffffff]" value="CLOTHING">CLOTHING</option>
+                  <option className="bg-[#000000] text-[#fffffff]" value="BOOKS">BOOKS</option>
+                  <option className="bg-[#000000] text-[#fffffff]" value="FURNITURE">FURNITURE</option>
+                </select>
+              </div>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button onClick={handleSaveProduct} className="bg-[#ffffff] rounded-lg">
+            <Button onClick={handleSaveProduct} className="bg-[#5EFD00] rounded-lg font-semibold">
               {isEditMode ? "Save Changes" : "Add Product"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isDeleteMode} onOpenChange={() => setisDeleteMode((val) => !val)} >
+        <DialogTrigger >
+          <div className="m-2 p-1 w-[170px] md:w-auto"  >DELETE</div>
+        </DialogTrigger>
+        <DialogContent className="bg-[#000000]" >
+          <div className="text-[#ffffff] m-5 " >
+            <div className="mb-3">
+              Update Product Availability
+            </div>
+            {productAvailability && productAvailability?.availability == true && <div className="text-[#2bff36]"> Product availability: Public </div>}
+            {productAvailability && productAvailability?.availability == false && <div className="text-[#ff2c2c]"> Product availability: Private  </div>}
+            <button className="my-3 bg-[#ffffff] text-[#000000] text-sm px-4 py-2 rounded-lg"
+              onClick={() => handleUpdateAvailability(productAvailability.id, !productAvailability.availability)}
+            >
+              Change Availability </button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

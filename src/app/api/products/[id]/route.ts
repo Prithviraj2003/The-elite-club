@@ -22,33 +22,42 @@ export async function DELETE(
   }
 }
 
-// export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-//   try {
-//     const { id } = params;
-//     const { name, description, price, quantity, imageUrl, category } = await request.json();
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const { name, description, price, imageUrl, category } =
+      await request.json();
 
-//     if (!name || !description || !price || !quantity || !category) {
-//       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-//     }
+    if (!name || !description || !price || !category) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
-//     const updatedProduct = await prisma.product.update({
-//       where: { id },
-//       data: {
-//         name,
-//         description,
-//         price,
-//         quantity,
-//         imageUrl,
-//         category,
-//       },
-//     });
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        price,
+        imageUrl,
+        category,
+      },
+    });
 
-//     return NextResponse.json(updatedProduct, { status: 200 });
-//   } catch (error) {
-//     console.error("Error updating product: ", error);
-//     return NextResponse.json({ error: "Error updating product" }, { status: 500 });
-//   }
-// }
+    return NextResponse.json(updatedProduct, { status: 200 });
+  } catch (error) {
+    console.error("Error updating product: ", error);
+    return NextResponse.json(
+      { error: "Error updating product" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function GET(
   request: NextRequest,
