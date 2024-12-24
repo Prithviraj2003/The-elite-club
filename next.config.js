@@ -12,15 +12,6 @@ const nextConfig = {
       },
     ],
   },
-  redirects: async () => {
-    return [
-      {
-        source: "/",
-        destination: "/signin",
-        permanent: true,
-      },
-    ];
-  },
   compress: true, // Enable gzip compression
   webpack: (config) => {
     // Optional: Custom Webpack configuration
