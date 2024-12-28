@@ -62,8 +62,8 @@ export default function ProductListProductcard({ data, cartItem }: { data: Produ
                     image: data.imageUrl,
                     price: data.price,
                     title: data.name
-                  })
-                  // removeFromLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity - 1), activeSize)
+                  }),
+                  removeFromLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity - 1), activeSize)
                 )}
               > - </button>
               <div className="select-none"> {isProductAdded[0].quantity}</div>
@@ -74,8 +74,8 @@ export default function ProductListProductcard({ data, cartItem }: { data: Produ
                     image: data.imageUrl,
                     price: data.price,
                     title: data.name
-                  })
-                  // addToLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity + 1), activeSize)
+                  }),
+                  addToLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity + 1), activeSize)
                 )}
               > + </button>
             </div>
@@ -96,7 +96,7 @@ export default function ProductListProductcard({ data, cartItem }: { data: Produ
         }
 
         {/* <button className='px-5 py-2 text-sm bg-[#333333] rounded-xl'> Select Options </button> */}
-      </div>
+      </div >
     </>
   );
 }
