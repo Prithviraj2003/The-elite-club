@@ -12,7 +12,7 @@ export default function BrandSelectionComponent({ brandTitle = "Brands", seeAllL
   return (
     <div {...props} className={`${props.className} flex flex-col items-center gap-[0.63rem] flex-1`}>
       <div className="flex items-start justify-between gap-[1.25rem] self-stretch border-t border-solid border-gray-300_01 py-[0.63rem]">
-        <Heading size="headingmd" as="h6" className="text-[1.00rem] font-semibold text-blue_gray-900_01">
+        <Heading size="headingmd" as="h6" className="text-[1.00rem] font-semibold text-gray-100">
           {brandTitle}
         </Heading>
         <Img
@@ -27,30 +27,30 @@ export default function BrandSelectionComponent({ brandTitle = "Brands", seeAllL
         <Checkbox
           label="Zara"
           id="48_6743_118_592_70_20"
-          className="gap-[1.00rem] text-[1.00rem] text-blue_gray-900_01"
+          className="gap-[1.00rem] text-[1.00rem] text-gray-100"
         />
         <Checkbox
           label="Jockey"
           id="48_6743_118_631_90_20"
-          className="gap-[1.00rem] text-[1.00rem] text-blue_gray-900_01"
+          className="gap-[1.00rem] text-[1.00rem] text-gray-100"
         />
         <Checkbox
           label="H&M"
           id="48_6743_118_668_70_20"
-          className="gap-[1.00rem] text-[1.00rem] text-blue_gray-900_01"
+          className="gap-[1.00rem] text-[1.00rem] text-gray-100"
         />
         <Checkbox
           label="Calvin Khan"
           id="48_6743_118_706_126_20"
-          className="gap-[1.00rem] text-[1.00rem] text-blue_gray-900_01"
+          className="gap-[1.00rem] text-[1.00rem] text-gray-100"
         />
         <Checkbox
           label="Roster"
           id="48_6743_118_744_86_20"
-          className="gap-[1.00rem] text-[1.00rem] text-blue_gray-900_01"
+          className="gap-[1.00rem] text-[1.00rem] text-gray-100"
         />
         <Link href="#">
-          <Text as="p" className="text-[1.00rem] font-normal text-blue_gray-900_01 underline">
+          <Text as="p" className="text-[1.00rem] font-normal text-gray-100 underline">
             {seeAllLink}
           </Text>
         </Link>

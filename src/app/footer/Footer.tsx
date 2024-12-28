@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <div className='bg-[#000000] py-8 flex flex-col text-[#ffffff] justify-center items-center gap-6'>
             <div> <img src="/Logo.png" alt="" /></div>
-            <div className='flex gap-4 text-sm text-[#a7a7a7]'>
+            <div className='flex gap-4 text-sm text-[#a7a7a7] md:flex-col flex-row'>
                 <Link href={'/productlist'}>
                     <div className='hover:text-[#5FFD00]'>SHOP ALL</div>
                 </Link>
@@ -26,7 +26,7 @@ const Footer = () => {
                 <div>PRIVACY POLICY</div>
                 <div> SHIPPING& RETURNS </div>
             </div>
-            <div className='text-sm text-[#a7a7a7] mt-3'>
+            <div className='text-sm text-[#a7a7a7] mt-3 text-center'>
                 © 2024 Thnklimitless Apparels Private Limited. All rights reserved.
             </div>
         </div>

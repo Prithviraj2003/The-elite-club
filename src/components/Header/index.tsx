@@ -10,9 +10,9 @@ interface Props {
 
 export default function Header({ ...props }: Props) {
   return (
-    <div {...props}>
-      <div className="flex justify-center self-stretch bg-blue_gray-900_01 py-[0.88rem]">
-        <div className="mx-auto flex w-full max-w-[75.25rem] items-center justify-between gap-[1.25rem] md:flex-col md:px-[1.25rem]">
+    <div {...props} className="bg-[#000000]">
+      <div className="flex justify-center self-stretch bg-blue_gray-900_01 py-[0.88rem] ">
+        <div className="mx-auto flex w-full max-w-[75.25rem] items-center justify-between gap-[1.25rem] md:flex-col md:px-[1.25rem] ">
           <Text as="p" className="self-end text-[1.00rem] font-normal text-white-a700 md:self-auto">
             <span className="text-white-a700">
               Sign up now and enjoy a 25% discount on your first order. Don&#39;t miss out!&nbsp;
@@ -30,29 +30,29 @@ export default function Header({ ...props }: Props) {
           </Link>
         </div>
       </div>
-      <div className="flex justify-center self-stretch border-b border-solid border-gray-600 bg-white-a700 py-[1.50rem] sm:py-[1.25rem]">
-        <div className="mx-auto flex w-full max-w-[75.25rem] items-center justify-between gap-[1.25rem] md:flex-col md:px-[1.25rem]">
-          <Img
+      <div className="flex justify-center self-stretch border-b border-solid border-gray-600  py-[1.50rem] sm:py-[1.25rem] bg-[#000000]">
+        <div className="mx-auto flex w-full max-w-[75.25rem] items-center justify-between gap-[1.25rem] md:flex-col md:px-[1.25rem] ">
+          <Link href={'/'}>  <Img
             src="img_header_logo.svg"
             width={126}
             height={32}
             alt="Header Logo"
             className="h-[2.00rem] w-[7.88rem] object-contain"
-          />
-          <Menubar className="flex flex-wrap gap-[1.25rem] border-none">
+          /></Link>
+          <Menubar className="flex flex-wrap gap-[1.25rem] border-none bg-[#000000]">
             <MenubarMenu>
               <MenubarTrigger>
-                <Heading size="headings" as="p" className="text-[0.88rem] font-semibold text-blue_gray-900_01">
-                  <Link href={'/productlist'}> Home</Link>
+                <Heading size="headings" as="p" className="text-[0.88rem] font-semibold ">
+                  <Link className="text-[#5FFD00]" href={'/productlist'}> Home</Link>
                 </Heading>
               </MenubarTrigger>
             </MenubarMenu>
-            <MenubarMenu>
+            <MenubarMenu >
               <MenubarTrigger>
                 <Heading
                   size="headings"
                   as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                 >
                   Shop
                 </Heading>
@@ -63,7 +63,7 @@ export default function Header({ ...props }: Props) {
                 <Heading
                   size="headings"
                   as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                 >
                   Women
                 </Heading>
@@ -74,7 +74,7 @@ export default function Header({ ...props }: Props) {
                 <Heading
                   size="headings"
                   as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                 >
                   Men
                 </Heading>
@@ -85,7 +85,7 @@ export default function Header({ ...props }: Props) {
                 <Heading
                   size="headings"
                   as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                 >
                   Accessories
                 </Heading>
@@ -97,7 +97,7 @@ export default function Header({ ...props }: Props) {
                   <Heading
                     size="headings"
                     as="p"
-                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                   >
                     About Us
                   </Heading>
@@ -110,7 +110,7 @@ export default function Header({ ...props }: Props) {
                   <Heading
                     size="headings"
                     as="p"
-                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                    className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                   >
                     Contact Us
                   </Heading>
@@ -122,7 +122,7 @@ export default function Header({ ...props }: Props) {
                 <Heading
                   size="headings"
                   as="p"
-                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-blue_gray-900_01"
+                  className="cursor-pointer text-[0.88rem] font-semibold text-gray-600 hover:text-[#5FFD00]"
                 >
                   Blog
                 </Heading>

@@ -10,19 +10,19 @@ interface Props {
 
 export default function Footer({ ...props }: Props) {
   return (
-    <div {...props} className={`${props.className} flex flex-col`}>
+    <div {...props} className={`${props.className} flex flex-col bg-[#000000]`}>
       <div className="self-stretch">
-        <div className="flex justify-center bg-white-a700">
+        <div className="flex justify-center bg-[#000000]">
           <div className="mx-auto flex w-full max-w-[75.25rem] justify-center md:px-[1.25rem]">
             <div className="flex w-full items-center gap-[3.13rem] md:flex-col">
-              <div className="flex flex-1 flex-col items-start justify-center gap-[1.63rem] md:self-stretch">
-                <Heading size="headingxl" as="h5" className="text-[1.38rem] font-semibold text-gray-600">
+              <div className="flex flex-1 flex-col items-start justify-center gap-[1.63rem] md:self-stretch ">
+                <Heading size="headingxl" as="h5" className="text-[1.38rem] font-semibold text-gray-100">
                   Our Newsletter
                 </Heading>
                 <Heading
                   size="heading5xl"
                   as="h1"
-                  className="text-[2.88rem] font-bold leading-[4.13rem] text-blue_gray-900_01 md:text-[2.63rem] sm:text-[2.25rem]"
+                  className="text-[2.88rem] font-bold leading-[4.13rem] text-gray-100 md:text-[2.63rem] sm:text-[2.25rem]"
                 >
                   <>
                     Subscribe to Our <br />
@@ -31,7 +31,7 @@ export default function Footer({ ...props }: Props) {
                     Our Latest Collection
                   </>
                 </Heading>
-                <Text size="textlg" as="p" className="text-[1.13rem] font-medium text-gray-600">
+                <Text size="textlg" as="p" className="text-[1.13rem] font-medium text-gray-100">
                   Get 20% off on your first order just by subscribing to our newsletter
                 </Text>
                 <div className="relative h-[4.13rem] w-[78%] content-center md:h-auto">
@@ -60,9 +60,9 @@ export default function Footer({ ...props }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center self-stretch bg-blue_gray-900_01 py-[2.50rem] sm:py-[1.25rem]">
-        <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[6.63rem] md:gap-[4.94rem] md:px-[1.25rem] sm:gap-[3.31rem]">
-          <div className="flex items-start justify-between gap-[1.25rem] md:flex-col">
+      <div className="flex flex-col items-center self-stretch bg-[#000000] py-[2.50rem] sm:py-[1.25rem]">
+        <div className="mx-auto flex w-auto max-w-[75.25rem] flex-col gap-[6.63rem] md:gap-[4.94rem] md:px-[1.25rem] sm:gap-[3.31rem]">
+          <div className="flex items-start justify-between gap-0 sm:gap-[1.25rem] md:flex-col">
             <div className="flex w-[46%] flex-col gap-[2.25rem] md:w-full">
               <Img src="img_frame_637.svg" width={544} height={32} alt="Fashion Image" className="h-[2.00rem]" />
               <div className="flex flex-col gap-[1.13rem]">
@@ -199,10 +199,12 @@ export default function Footer({ ...props }: Props) {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-[1.25rem]">
-            <Text as="p" className="self-end text-[1.00rem] font-normal text-white-a700_cc">
-              © 2020 All Right Reserved
-            </Text>
+          <div className="flex  sm:flex-col flex-row items-center justify-between gap-0 sm:gap-[1.25rem]">
+            <div>
+              <Text as="p" className="self-end text-[1.00rem] font-normal text-white-a700_cc">
+                © 2020 All Right Reserved
+              </Text>
+            </div>
             <div className="flex w-[10%] justify-between gap-[1.25rem]">
               <Img
                 src="img_bx_bxl_instagram_alt.svg"

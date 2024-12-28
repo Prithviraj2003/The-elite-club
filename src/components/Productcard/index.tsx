@@ -1,9 +1,10 @@
 'use client'
 import { useCart } from "@/store/store";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useStore } from "zustand";
 import { Button, Heading, Img, Text } from "../ui";
+import Image from "next/image";
 
 interface Product {
   category: string,
@@ -27,97 +28,59 @@ interface CartState {
 
 export default function ProductListProductcard({ data, cartItem }: { data: Product, cartItem: any }) {
   const { cartItems, incrementItem, decrementItem } = useCart();
-  // console.log(, "this is cart item")
+  const [activeSize, setactiveSize] = useState('S')
   const isProductAdded = cartItems.filter((cart: any) => cart.image == data?.imageUrl)
   console.log(data)
 
-  const removeFromLocalStorage = (id: string, image: string, price: Number, name: string, quantity = 1) => {
-    localStorage.setItem(id, JSON.stringify({ id, image, price, name, quantity }))
+  const removeFromLocalStorage = (id: string, image: string, price: Number, name: string, quantity = 1, size: string) => {
+    localStorage.setItem(id, JSON.stringify({ id, image, price, name, quantity, size }))
   }
 
-  const addToLocalStorage = (id: string, image: string, price: Number, name: string, quantity = 1) => {
-    localStorage.setItem(id, JSON.stringify({ id, image, price, name, quantity }))
+  const addToLocalStorage = (id: string, image: string, price: Number, name: string, quantity = 1, size: string) => {
+    localStorage.setItem(id, JSON.stringify({ id, image, price, name, quantity, size }))
   }
   return (
-    <div className={` flex flex-col justify-between items-center w-full `}>
-      <div className="relative min-h-[21.25rem] content-center self-stretch">
-        <Link href={`/productlist/${data.id}`}>
-          <img
-            src={data?.imageUrl}
-            width={272}
-            height={340}
-            alt="Urban Vibe Image"
-            className="mx-auto h-[21.25rem] w-full flex-1 object-cover"
-          />
-        </Link>
-        <Button
-          size="sm"
-          shape="square"
-          className="absolute left-[0.56rem] top-[0.63rem] m-auto w-full min-w-[4.88rem] bg-red-700 rounded-2xl text-white-a700 max-w-[4.88rem] px-[0.75rem] font-bold"
-        >
-          25% OFF
-        </Button>
-      </div>
-      <div className="flex flex-col items-start justify-center gap-[0.38rem] self-stretch p-2">
-        <div className="flex ">
-          <Heading as="h6" className="text-[0.9rem] font-semibold text-blue_gray-900_01">
-            {data?.name}
-          </Heading>
-        </div>
-        <div className="flex self-stretch">
-          <Heading size="headings" as="p" className="text-[0.88rem] font-semibold text-gray-400">
-            H&M
-          </Heading>
-          <div className="flex flex-1 px-[1.00rem]">
-            <Img
-              src="img_frame_amber_500.svg"
-              width={16}
-              height={16}
-              alt="Rating Image"
-              className="h-[1.00rem] w-[1.00rem]"
-            />
-            <Heading size="headings" as="p" className="text-[0.88rem] font-semibold text-blue_gray-900_01">
-              {data.rating?.toString()}
-            </Heading>
-          </div>
-        </div>
-        <div className="flex  gap-[0.56rem] self-stretch items-center">
-          <Heading as="h6" className="flex text-[1.13rem] font-bold text-blue_gray-900_01">
-            Rs. {(data.price)}
-          </Heading>
-          <Text size="textlg" as="p" className="text-[0.93rem] font-normal text-gray-400 line-through ">
-            Rs {(data.price + 100)}
-          </Text>
-        </div>
+    <>
+
+      <div className='flex flex-col justify-between max-w-[400px]'>
+        <Link href={`/productlist/${data.id}`}> <Image src={data?.imageUrl} height={500} width={250} alt='img' className='p-3 w-[300px] h-[350px] rounded-lg' /></Link>
+        <div className='my-3 text-xl'>     {data?.name}</div>
+        <div className='my-1'> ₹{data.price} </div>
+        <select name="" id="" onChange={(e) => setactiveSize(e.target.value)} className='max-w-[300px] bg-black text-[#ffffff] my-5 hover:bg-[#5630CE] transition-all duration-200 rounded-md'>
+          <option className='bg-[#272727] hover:bg-[#5630CE] text-[#dadada] text-center' value="S">S</option>
+          <option className='bg-[#272727] hover:bg-[#5630CE] text-[#dadada] text-center' value="M">M</option>
+          <option className='bg-[#272727] hover:bg-[#5630CE] text-[#dadada] text-center' value="L">L</option>
+          <option className='bg-[#272727] hover:bg-[#5630CE] text-[#dadada] text-center' value="XL">XL</option>
+        </select>
         {
           isProductAdded.length > 0 ?
             <div className="flex gap-4 items-center cursor-pointer">
-              <div className="border border-blue-700 px-2 select-none rounded-sm"
+              <button className='px-5 py-2 text-sm bg-[#333333] rounded-xl'
                 onClick={() => (
                   decrementItem({
                     id: data.id,
                     image: data.imageUrl,
                     price: data.price,
                     title: data.name
-                  }),
-                  removeFromLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity - 1))
+                  })
+                  // removeFromLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity - 1), activeSize)
                 )}
-              > - </div>
+              > - </button>
               <div className="select-none"> {isProductAdded[0].quantity}</div>
-              <div className="border border-blue-700 px-2 select-none rounded-sm"
+              <button className='px-5 py-2 text-sm bg-[#333333] rounded-xl'
                 onClick={() => (
                   incrementItem({
                     id: data.id,
                     image: data.imageUrl,
                     price: data.price,
                     title: data.name
-                  }),
-                  addToLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity + 1))
+                  })
+                  // addToLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity + 1), activeSize)
                 )}
-              > + </div>
+              > + </button>
             </div>
             :
-            <div className="border select-none border-primary font-semibold rounded-md px-2 my-1 text-base cursor-pointer hover:bg-blue_gray-900_01 hover:text-[#ffff] active:bg-transparent active:text-blue_gray-900_01 active:scale-95"
+            <button className='px-5 py-2 text-sm bg-[#333333] rounded-xl'
               onClick={() => (
                 incrementItem({
                   id: data.id,
@@ -125,14 +88,15 @@ export default function ProductListProductcard({ data, cartItem }: { data: Produ
                   price: data.price,
                   title: data.name
                 }),
-                addToLocalStorage(data.id, data.imageUrl, data.price, data.name)
+                addToLocalStorage(data.id, data.imageUrl, data.price, data.name, (isProductAdded[0].quantity + 1), activeSize)
               )}
             >
               Add to Cart
-            </div>
+            </button>
         }
 
+        {/* <button className='px-5 py-2 text-sm bg-[#333333] rounded-xl'> Select Options </button> */}
       </div>
-    </div >
+    </>
   );
 }

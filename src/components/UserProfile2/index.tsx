@@ -29,22 +29,22 @@ export default function UserProfile2({
       />
       <div className="flex flex-col gap-[0.63rem] self-stretch">
         <div className="flex items-center">
-          <Text as="p" className="text-[1.00rem] font-normal text-gray-800_01">
+          <Text as="p" className="text-[1.00rem] font-normal text-gray-100">
             {dateText}
           </Text>
           <Separator
             orientation="vertical"
             className="ml-[1.00rem] h-[1.00rem] w-[0.06rem] self-start bg-blue_gray-700"
           />
-          <Text as="p" className="ml-[0.88rem] text-[1.00rem] font-normal text-gray-800_01">
+          <Text as="p" className="ml-[0.88rem] text-[1.00rem] font-normal text-gray-100">
             {brandName}
           </Text>
         </div>
         <div className="flex flex-col items-start justify-center gap-[0.88rem]">
-          <Heading as="h6" className="text-[1.13rem] font-semibold text-blue_gray-900_01">
+          <Heading as="h6" className="text-[1.13rem] font-semibold text-gray-100">
             {titleText}
           </Heading>
-          <Text size="textlg" as="p" className="w-full text-[1.13rem] font-normal leading-[1.75rem] text-gray-800_01">
+          <Text size="textlg" as="p" className="w-full text-[1.13rem] font-normal leading-[1.75rem] text-gray-100">
             {descriptionText}
           </Text>
         </div>

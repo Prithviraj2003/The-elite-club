@@ -58,14 +58,13 @@ export default function ProductlistPage() {
   useEffect(() => {
     fetchProducts()
   }, [])
-  console.log(Data)
   return (
-    <div className="flex w-full flex-col gap-[5.63rem] bg-white-a700 md:gap-[4.19rem] sm:gap-[2.81rem]">
-      <div className="flex flex-col gap-[1.50rem]">
+    <div className="flex w-full flex-col  bg-white-a700 md:gap-[4.19rem] sm:gap-[2.81rem] bg-[#000000]">
+      <div className="flex flex-col gap-[1.50rem] bg-[#000000] text-gray-100">
         <Header />
-        <div className="flex flex-col items-center">
-          <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[2.88rem] md:px-[1.25rem]">
-            <Breadcrumb>
+        <div className="flex flex-col items-center bg-[#000000]">
+          <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[2.88rem] md:px-[1.25rem] bg-[#000000]">
+            <Breadcrumb className="bg-[#000000]">
               <BreadcrumbList className="flex flex-wrap items-center gap-[0.38rem]">
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
@@ -103,15 +102,15 @@ export default function ProductlistPage() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
-            <div className="flex items-start gap-[3.00rem] md:flex-col">
-              <div className="flex w-[20%] flex-col items-start gap-[0.75rem] md:w-full">
-                <Heading as="h2" className="mt-[0.50rem] text-[1.13rem] font-bold text-blue_gray-900_01">
+            <div className="flex items-start gap-[3.00rem] md:flex-col ">
+              <div className="flex w-[20%] flex-col items-start gap-[0.75rem] md:w-full ">
+                <Heading as="h2" className="mt-[0.50rem] text-gray-100 text-[1.13rem] font-bold text-blue_gray-900_01">
                   Filters
                 </Heading>
-                <div className="flex flex-col gap-[0.38rem] self-stretch">
+                <div className="flex flex-col gap-[0.38rem] self-stretch ">
                   <div className="flex flex-col gap-[0.75rem]">
                     <div className="flex items-center justify-between gap-[1.25rem] border-t border-solid border-gray-300_01 py-[0.75rem]">
-                      <Heading size="headingmd" as="h3" className="text-[1.00rem] font-semibold text-gray-600">
+                      <Heading size="headingmd" as="h3" className="text-[1.00rem] text-gray-100 font-semibold text-gray-600">
                         Category
                       </Heading>
                       <Img
@@ -123,16 +122,16 @@ export default function ProductlistPage() {
                       />
                     </div>
                     <div className="mb-[0.25rem] flex flex-col items-start gap-[1.25rem]">
-                      <Text as="p" className="text-[1.00rem] font-normal text-gray-800">
+                      <Text as="p" className="text-[1.00rem] font-normal text-gray-100">
                         Jacket
                       </Text>
-                      <Text as="p" className="text-[1.00rem] font-normal text-gray-800">
+                      <Text as="p" className="text-[1.00rem] font-normal text-gray-100">
                         T-Shirt
                       </Text>
-                      <Text as="p" className="text-[1.00rem] font-normal text-gray-800">
+                      <Text as="p" className="text-[1.00rem] font-normal text-gray-100">
                         Jeans
                       </Text>
-                      <Text as="p" className="text-[1.00rem] font-normal text-gray-800">
+                      <Text as="p" className="text-[1.00rem] font-normal text-gray-100">
                         Panty
                       </Text>
                       <Link href="#">
@@ -146,10 +145,10 @@ export default function ProductlistPage() {
                     <BrandSelectionComponent />
                   </div>
 
-                  <div className="text-#00000 font-semibold mb-3"> Price </div>
-                  <div className="text-sm text-blue_gray-900_01 font-semibold">Current Value- ₹{price} </div>
+                  <div className="text-gray-100 font-semibold mb-3"> Price </div>
+                  <div className="text-sm text-gray-100 font-semibold">Current Value- ₹{price} </div>
                   <input type="range" value={price} max={10000} onChange={(e) => setprice(Number(e.target.value))} />
-                  <div className="flex justify-between text-sm text-blue_gray-900_01 font-semibold">
+                  <div className="flex justify-between text-sm text-gray-100 font-semibold">
                     <div>₹0</div>
                     <div>₹10,000</div>
                   </div>

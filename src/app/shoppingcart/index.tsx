@@ -1,5 +1,4 @@
 "use client";
-import Header from "../../components/Header";
 import RelatedProductsSection from "./RelatedProductsSection";
 import {
   Img,
@@ -23,6 +22,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 // @ts-ignore
 import { ShoppingCart } from "lucide-react";
+import Header from "../header/Header";
 
 export default function ShoppingCartPage() {
   const { cartItems, incrementItem, decrementItem } = useCart();
@@ -142,9 +142,9 @@ export default function ShoppingCartPage() {
   }, [])
 
   return (
-    <div className="flex w-full flex-col gap-[5.50rem] bg-white-a700 md:gap-[4.13rem] sm:gap-[2.75rem]">
-      <div className="flex flex-col gap-[1.50rem]">
-        {/* <Header /> */}
+    <div className="flex w-full flex-col  bg-white-a700 ">
+      <div className="flex flex-col ">
+        <Header />
         <div className="flex flex-col items-center">
           {/* <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[2.88rem] md:px-[1.25rem]">
             <Breadcrumb>
@@ -399,7 +399,7 @@ export default function ShoppingCartPage() {
       <RelatedProductsSection />
       {/* FOOTER */}
       <div className="flex">
-        <div className="flex w-full justify-center bg-blue_gray-900_01 py-[2.50rem] sm:py-[1.25rem]">
+        <div className="flex w-full justify-center bg-[#000000] py-[2.50rem] sm:py-[1.25rem]">
           <div className="mx-auto flex w-full max-w-[75.25rem] justify-center md:px-[1.25rem]">
             <div className="flex w-full flex-col gap-[6.75rem] md:gap-[5.06rem] sm:gap-[3.38rem]">
               <div className="mr-[3.38rem] flex items-start justify-between gap-[1.25rem] md:mr-0 md:flex-col">

@@ -32,21 +32,21 @@ const blogList = [
 export default function NewsBlogSection() {
   return (
     <>
-      <div className="flex flex-col items-center">
-        <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[3.00rem] md:px-[1.25rem]">
+      <div className="flex flex-col items-center bg-[#000000] ">
+        <div className="mx-auto flex w-full max-w-[75.25rem] flex-col gap-[3.00rem] md:px-[1.25rem] ">
           <div className="flex flex-col items-center justify-center gap-[1.00rem] self-center">
-            <Heading as="h2" className="text-[1.13rem] font-semibold text-gray-600">
+            <Heading as="h2" className="text-[1.13rem] font-semibold text-gray-100">
               News & Blog
             </Heading>
             <Heading
               size="heading4xl"
               as="h3"
-              className="text-[1.88rem] font-semibold text-blue_gray-900_01 md:text-[1.75rem] sm:text-[1.63rem]"
+              className="text-[1.88rem] font-semibold text-gray-100 md:text-[1.75rem] sm:text-[1.63rem]"
             >
               Our Latest News & Blogs
             </Heading>
           </div>
-          <div className="flex gap-[1.88rem] overflow-x-scroll md:flex-col">
+          <div className="flex gap-[1.88rem] overflow-x-hidden md:flex-col">
             <Suspense fallback={<div>Loading feed...</div>}>
               {blogList.map((d, index) => (
                 <UserProfile2 {...d} key={"blogList1" + index} />
